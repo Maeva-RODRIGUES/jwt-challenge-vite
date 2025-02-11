@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Field, ObjectType } from "type-graphql";
+import { Field, InputType, ObjectType } from "type-graphql";
 
 @ObjectType()
 @Entity()
@@ -16,3 +16,27 @@ export default class User {
   @Column()
   password: string;
 }
+
+@ObjectType()
+export class UserWithoutPassword implements Omit<User, "password"> {
+  @Field()
+  id: string;
+
+  @Field()
+  email: string;
+}
+//--------------------------------------------
+// INPUT TYPE
+//--------------------------------------------
+@InputType()
+export class InputRegister {
+  @Field()
+  email: string;
+  
+  @Field()
+  password: string
+}
+
+
+
+

@@ -12,4 +12,7 @@ export default class UserService {
     return this.db.find();
   }
   
+  async findUserByEmail(email: string) {
+    return await this.db.findOneBy({ email });
+  }
 }
