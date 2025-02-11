@@ -8,6 +8,7 @@ import Cookies from "cookies";
 import { jwtVerify } from "jose";
 import UserService from "./services/user.service";
 import User from "./entities/user.entity";
+import { customAuthChecker } from "./lib/authChecker";
 
 
 import express from "express";
@@ -32,6 +33,7 @@ async function main() {
   const schema = await buildSchema({
     resolvers: [BookResolver, UserResolver],
     validate: false,
+    authChecker: customAuthChecker
   });
   // const server = new ApolloServer({
   //   schema,
