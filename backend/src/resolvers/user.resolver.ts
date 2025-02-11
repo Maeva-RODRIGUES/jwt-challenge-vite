@@ -1,11 +1,14 @@
 import * as argon2 from "argon2";
 import { SignJWT } from "jose";
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import UserService from "../services/user.service";
 import User, {  InputLogin,
   InputRegister,
   Message,
   UserWithoutPassword,}  from "../entities/user.entity";
+import { MyContext } from "../index";
+import Cookies from "cookies";
+
 
 @Resolver()
 export default class UserResolver {
@@ -26,7 +29,7 @@ export default class UserResolver {
 }
 
 @Query(() => Message)
-  async login(@Arg("infos") infos: InputLogin) {
+  async login(@Arg("infos") infos: InputLogin, @Ctx() ctx: MyContext) {
     const user = await new UserService().findUserByEmail(infos.email);
     if (!user) {
       throw new Error("Vérifiez vos informations");
@@ -38,8 +41,10 @@ export default class UserResolver {
         .setProtectedHeader({ alg: "HS256", typ: "jwt" })
         .setExpirationTime("2h")
         .sign(new TextEncoder().encode(`${process.env.SECRET_KEY}`));
-      console.log("token", token);
-      
+
+      let cookies = new Cookies(ctx.req, ctx.res);
+      cookies.set("token", token, { httpOnly: true });
+
       m.message = "Bienvenue!";
       m.success = true;
     } else {
