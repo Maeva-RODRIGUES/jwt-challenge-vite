@@ -1,5 +1,6 @@
 services:
   backend:
+  
     build: ./backend
     ports:
       - 4005:4005
@@ -18,6 +19,13 @@ services:
       interval: 10s
       timeout: 30s
       retries: 5
+    develop:
+      watch:
+        - action: sync
+          path: ./backend
+          target: /src
+          ignore:
+            - node_modules/
   frontend:
     build: ./frontend
     # command: "sh -c ./start.sh"

@@ -19,6 +19,7 @@ export default class User {
 
   @BeforeInsert()
   protected async hashPassword() {
+    console.log("🚀 @BeforeInsert() - Hashing password...");
     this.password = await argon2.hash(this.password);
   }
 }
@@ -32,6 +33,16 @@ export class UserWithoutPassword implements Omit<User, "password"> {
   @Field()
   email: string;
 }
+
+@ObjectType()
+export class Message {
+  @Field()
+  success: boolean;
+
+  @Field()
+  message: string;
+}
+
 //--------------------------------------------
 // INPUT TYPE
 //--------------------------------------------
@@ -45,6 +56,14 @@ export class InputRegister {
   password: string
 }
 
+@InputType()
+export class InputLogin {
+  @Field()
+  email: string;
+
+  @Field()
+  password: string;
+}
 
 
 

@@ -1,6 +1,9 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import UserService from "../services/user.service";
-import User, { InputRegister, UserWithoutPassword }  from "../entities/user.entity";
+import User, {  InputLogin,
+  InputRegister,
+  Message,
+  UserWithoutPassword,}  from "../entities/user.entity";
 
 @Resolver()
 export default class UserResolver {
@@ -16,10 +19,14 @@ export default class UserResolver {
     if (user) {
       throw new Error("Cet email est déjà pris!");
   }
+  const newUser = await new UserService().createUser(infos);
+    return newUser;
 }
 
-
-
-
+@Query(() => Message)
+async login(@Arg("infos") infos: InputLogin): Promise<Message> {
+  console.log("infos", infos);
+  return { success: true, message: "Connexion réussie" };
+}
 
 }
