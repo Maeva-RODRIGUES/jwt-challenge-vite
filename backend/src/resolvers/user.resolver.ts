@@ -1,4 +1,5 @@
 import * as argon2 from "argon2";
+import { SignJWT } from "jose";
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import UserService from "../services/user.service";
 import User, {  InputLogin,
@@ -32,8 +33,19 @@ export default class UserResolver {
     }
     const isPasswordValid = await argon2.verify(user.password, infos.password);
     const m = new Message();
-    m.message = isPasswordValid ? "Bienvenue!" : "Vérifiez vos informations";
-    m.success = isPasswordValid ? true : false;
+    if (isPasswordValid) {
+      const token = await new SignJWT({ email: user.email })
+        .setProtectedHeader({ alg: "HS256", typ: "jwt" })
+        .setExpirationTime("2h")
+        .sign(new TextEncoder().encode(`${process.env.SECRET_KEY}`));
+      console.log("token", token);
+      
+      m.message = "Bienvenue!";
+      m.success = true;
+    } else {
+      m.message = "Vérifiez vos informations";
+      m.success = false;
+    }
     return m;
   }
 }
