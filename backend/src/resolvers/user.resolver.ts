@@ -1,3 +1,4 @@
+import * as argon2 from "argon2";
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import UserService from "../services/user.service";
 import User, {  InputLogin,
@@ -24,9 +25,15 @@ export default class UserResolver {
 }
 
 @Query(() => Message)
-async login(@Arg("infos") infos: InputLogin): Promise<Message> {
-  console.log("infos", infos);
-  return { success: true, message: "Connexion réussie" };
-}
-
+  async login(@Arg("infos") infos: InputLogin) {
+    const user = await new UserService().findUserByEmail(infos.email);
+    if (!user) {
+      throw new Error("Vérifiez vos informations");
+    }
+    const isPasswordValid = await argon2.verify(user.password, infos.password);
+    const m = new Message();
+    m.message = isPasswordValid ? "Bienvenue!" : "Vérifiez vos informations";
+    m.success = isPasswordValid ? true : false;
+    return m;
+  }
 }
