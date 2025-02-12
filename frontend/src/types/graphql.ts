@@ -23,6 +23,10 @@ export type Book = {
   title: Scalars['String']['output'];
 };
 
+export type InputCreateBook = {
+  title: Scalars['String']['input'];
+};
+
 export type InputLogin = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -41,7 +45,13 @@ export type Message = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createBook: Book;
   register: UserWithoutPassword;
+};
+
+
+export type MutationCreateBookArgs = {
+  infos: InputCreateBook;
 };
 
 
@@ -67,12 +77,14 @@ export type User = {
   email: Scalars['String']['output'];
   id: Scalars['String']['output'];
   password: Scalars['String']['output'];
+  role: Scalars['String']['output'];
 };
 
 export type UserWithoutPassword = {
   __typename?: 'UserWithoutPassword';
   email: Scalars['String']['output'];
   id: Scalars['String']['output'];
+  role: Scalars['String']['output'];
 };
 
 export type RegisterMutationVariables = Exact<{
@@ -82,12 +94,24 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserWithoutPassword', id: string, email: string } };
 
+export type CreateBookMutationVariables = Exact<{
+  infos: InputCreateBook;
+}>;
+
+
+export type CreateBookMutation = { __typename?: 'Mutation', createBook: { __typename?: 'Book', id: string, title: string } };
+
 export type LoginQueryVariables = Exact<{
   infos: InputLogin;
 }>;
 
 
 export type LoginQuery = { __typename?: 'Query', login: { __typename?: 'Message', success: boolean, message: string } };
+
+export type LogoutQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutQuery = { __typename?: 'Query', logout: { __typename?: 'Message', success: boolean, message: string } };
 
 export type BooksQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -129,6 +153,40 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const CreateBookDocument = gql`
+    mutation CreateBook($infos: InputCreateBook!) {
+  createBook(infos: $infos) {
+    id
+    title
+  }
+}
+    `;
+export type CreateBookMutationFn = Apollo.MutationFunction<CreateBookMutation, CreateBookMutationVariables>;
+
+/**
+ * __useCreateBookMutation__
+ *
+ * To run a mutation, you first call `useCreateBookMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateBookMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createBookMutation, { data, loading, error }] = useCreateBookMutation({
+ *   variables: {
+ *      infos: // value for 'infos'
+ *   },
+ * });
+ */
+export function useCreateBookMutation(baseOptions?: Apollo.MutationHookOptions<CreateBookMutation, CreateBookMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateBookMutation, CreateBookMutationVariables>(CreateBookDocument, options);
+      }
+export type CreateBookMutationHookResult = ReturnType<typeof useCreateBookMutation>;
+export type CreateBookMutationResult = Apollo.MutationResult<CreateBookMutation>;
+export type CreateBookMutationOptions = Apollo.BaseMutationOptions<CreateBookMutation, CreateBookMutationVariables>;
 export const LoginDocument = gql`
     query Login($infos: InputLogin!) {
   login(infos: $infos) {
@@ -170,6 +228,46 @@ export type LoginQueryHookResult = ReturnType<typeof useLoginQuery>;
 export type LoginLazyQueryHookResult = ReturnType<typeof useLoginLazyQuery>;
 export type LoginSuspenseQueryHookResult = ReturnType<typeof useLoginSuspenseQuery>;
 export type LoginQueryResult = Apollo.QueryResult<LoginQuery, LoginQueryVariables>;
+export const LogoutDocument = gql`
+    query Logout {
+  logout {
+    success
+    message
+  }
+}
+    `;
+
+/**
+ * __useLogoutQuery__
+ *
+ * To run a query within a React component, call `useLogoutQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLogoutQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLogoutQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutQuery(baseOptions?: Apollo.QueryHookOptions<LogoutQuery, LogoutQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LogoutQuery, LogoutQueryVariables>(LogoutDocument, options);
+      }
+export function useLogoutLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LogoutQuery, LogoutQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LogoutQuery, LogoutQueryVariables>(LogoutDocument, options);
+        }
+export function useLogoutSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<LogoutQuery, LogoutQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<LogoutQuery, LogoutQueryVariables>(LogoutDocument, options);
+        }
+export type LogoutQueryHookResult = ReturnType<typeof useLogoutQuery>;
+export type LogoutLazyQueryHookResult = ReturnType<typeof useLogoutLazyQuery>;
+export type LogoutSuspenseQueryHookResult = ReturnType<typeof useLogoutSuspenseQuery>;
+export type LogoutQueryResult = Apollo.QueryResult<LogoutQuery, LogoutQueryVariables>;
 export const BooksDocument = gql`
     query Books {
   books {

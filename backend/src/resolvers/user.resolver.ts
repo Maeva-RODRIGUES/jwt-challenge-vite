@@ -2,7 +2,8 @@ import * as argon2 from "argon2";
 import { SignJWT } from "jose";
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import UserService from "../services/user.service";
-import User, {  InputLogin,
+import User, {  CheckTokenInfos,
+  InputLogin,
   InputRegister,
   Message,
   UserWithoutPassword,}  from "../entities/user.entity";
@@ -66,5 +67,11 @@ export default class UserResolver {
     
     return m;
   }
+
+  @Query(() => CheckTokenInfos, { nullable: true })
+  async checkToken(@Ctx() ctx: MyContext) {
+    return ctx.user ? { email: ctx.user.email } : null;
+  }
+
 
 }

@@ -7,6 +7,9 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import Home from "./components/Home.tsx";
 import Login from "./components/auth/Login.tsx";
 import Register from "./components/auth/Register.tsx";
+import ListBooks from "./components/ListBooks.tsx";
+import CreateBook from "./components/CreateBook.tsx";
+import Logout from "./components/auth/Logout.tsx";
 
 export const client = new ApolloClient({
   cache: new InMemoryCache({
@@ -26,6 +29,9 @@ const router = createBrowserRouter([
       },
       { path: "/auth/login", element: <Login /> },
       { path: "/auth/register", element: <Register /> },
+      { path: "/auth/logout", element: <Logout /> },
+      { path: "/books/list", element: <ListBooks /> },
+      { path: "/books/create", element: <CreateBook /> },
     ],
   },
 ]);

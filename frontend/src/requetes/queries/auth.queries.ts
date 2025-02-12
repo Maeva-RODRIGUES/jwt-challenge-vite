@@ -8,3 +8,21 @@ export const LOGIN = gql`
     }
   }
 `;
+
+export const LOGOUT = gql`
+  query Logout {
+    logout {
+      success
+      message
+    }
+  }
+`;
+
+export const CHECK_TOKEN = gql`
+  query CheckToken {
+    checkToken {
+      email
+    }
+  }
+`;
+
