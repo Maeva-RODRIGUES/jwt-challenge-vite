@@ -23,6 +23,11 @@ export type Book = {
   title: Scalars['String']['output'];
 };
 
+export type CheckTokenInfos = {
+  __typename?: 'CheckTokenInfos';
+  email: Scalars['String']['output'];
+};
+
 export type InputCreateBook = {
   title: Scalars['String']['input'];
 };
@@ -62,6 +67,7 @@ export type MutationRegisterArgs = {
 export type Query = {
   __typename?: 'Query';
   books: Array<Book>;
+  checkToken?: Maybe<CheckTokenInfos>;
   login: Message;
   logout: Message;
   users: Array<User>;
@@ -77,14 +83,12 @@ export type User = {
   email: Scalars['String']['output'];
   id: Scalars['String']['output'];
   password: Scalars['String']['output'];
-  role: Scalars['String']['output'];
 };
 
 export type UserWithoutPassword = {
   __typename?: 'UserWithoutPassword';
   email: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  role: Scalars['String']['output'];
 };
 
 export type RegisterMutationVariables = Exact<{
@@ -112,6 +116,11 @@ export type LogoutQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type LogoutQuery = { __typename?: 'Query', logout: { __typename?: 'Message', success: boolean, message: string } };
+
+export type CheckTokenQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CheckTokenQuery = { __typename?: 'Query', checkToken?: { __typename?: 'CheckTokenInfos', email: string } | null };
 
 export type BooksQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -268,6 +277,45 @@ export type LogoutQueryHookResult = ReturnType<typeof useLogoutQuery>;
 export type LogoutLazyQueryHookResult = ReturnType<typeof useLogoutLazyQuery>;
 export type LogoutSuspenseQueryHookResult = ReturnType<typeof useLogoutSuspenseQuery>;
 export type LogoutQueryResult = Apollo.QueryResult<LogoutQuery, LogoutQueryVariables>;
+export const CheckTokenDocument = gql`
+    query CheckToken {
+  checkToken {
+    email
+  }
+}
+    `;
+
+/**
+ * __useCheckTokenQuery__
+ *
+ * To run a query within a React component, call `useCheckTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCheckTokenQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCheckTokenQuery(baseOptions?: Apollo.QueryHookOptions<CheckTokenQuery, CheckTokenQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CheckTokenQuery, CheckTokenQueryVariables>(CheckTokenDocument, options);
+      }
+export function useCheckTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CheckTokenQuery, CheckTokenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CheckTokenQuery, CheckTokenQueryVariables>(CheckTokenDocument, options);
+        }
+export function useCheckTokenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CheckTokenQuery, CheckTokenQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CheckTokenQuery, CheckTokenQueryVariables>(CheckTokenDocument, options);
+        }
+export type CheckTokenQueryHookResult = ReturnType<typeof useCheckTokenQuery>;
+export type CheckTokenLazyQueryHookResult = ReturnType<typeof useCheckTokenLazyQuery>;
+export type CheckTokenSuspenseQueryHookResult = ReturnType<typeof useCheckTokenSuspenseQuery>;
+export type CheckTokenQueryResult = Apollo.QueryResult<CheckTokenQuery, CheckTokenQueryVariables>;
 export const BooksDocument = gql`
     query Books {
   books {

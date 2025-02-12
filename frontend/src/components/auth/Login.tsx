@@ -1,12 +1,29 @@
+
+import { useAuth } from "@/context/AuthContext";
 import { LOGIN } from "@/requetes/queries/auth.queries";
 import { InputLogin, LoginQuery, LoginQueryVariables } from "@/types/graphql";
 import { useLazyQuery } from "@apollo/client";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Login() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const { getInfos } = useAuth();
+
   const [login, { data, error }] = useLazyQuery<
     LoginQuery,
     LoginQueryVariables
-  >(LOGIN);
+  >(LOGIN, {
+    fetchPolicy: "no-cache",
+    async onCompleted(data) {
+      const initialRoute = location.state?.initialRoute;
+      await getInfos();
+      if (data.login.success && initialRoute) {
+        navigate(initialRoute);
+      }
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,6 +40,7 @@ function Login() {
       className={`flex min-h-screen flex-col items-center justify-between p-24`}
     >
       <form onSubmit={handleSubmit}>
+        <h1 className="mb-5">Connexion</h1>
         <div>
           <input type="text" name="email" placeholder="Indiquez votre email" />
         </div>
@@ -48,3 +66,5 @@ function Login() {
 }
 
 export default Login;
+
+
