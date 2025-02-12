@@ -31,7 +31,7 @@ const httpServer = http.createServer(app);
 // ✅ 1. Appliquer CORS avant tout autre middleware
 app.use(
   cors({
-    origin: ["http://localhost:5173/", "https://studio.apollograhql.com"], 
+    origin: "http://localhost:5173", 
     credentials: true,
   })
 );
