@@ -53,6 +53,7 @@ export type Query = {
   __typename?: 'Query';
   books: Array<Book>;
   login: Message;
+  logout: Message;
   users: Array<User>;
 };
 
@@ -74,12 +75,60 @@ export type UserWithoutPassword = {
   id: Scalars['String']['output'];
 };
 
+export type LoginQueryVariables = Exact<{
+  infos: InputLogin;
+}>;
+
+
+export type LoginQuery = { __typename?: 'Query', login: { __typename?: 'Message', success: boolean, message: string } };
+
 export type BooksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type BooksQuery = { __typename?: 'Query', books: Array<{ __typename?: 'Book', title: string, id: string }> };
 
 
+export const LoginDocument = gql`
+    query Login($infos: InputLogin!) {
+  login(infos: $infos) {
+    success
+    message
+  }
+}
+    `;
+
+/**
+ * __useLoginQuery__
+ *
+ * To run a query within a React component, call `useLoginQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLoginQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLoginQuery({
+ *   variables: {
+ *      infos: // value for 'infos'
+ *   },
+ * });
+ */
+export function useLoginQuery(baseOptions: Apollo.QueryHookOptions<LoginQuery, LoginQueryVariables> & ({ variables: LoginQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LoginQuery, LoginQueryVariables>(LoginDocument, options);
+      }
+export function useLoginLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LoginQuery, LoginQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LoginQuery, LoginQueryVariables>(LoginDocument, options);
+        }
+export function useLoginSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<LoginQuery, LoginQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<LoginQuery, LoginQueryVariables>(LoginDocument, options);
+        }
+export type LoginQueryHookResult = ReturnType<typeof useLoginQuery>;
+export type LoginLazyQueryHookResult = ReturnType<typeof useLoginLazyQuery>;
+export type LoginSuspenseQueryHookResult = ReturnType<typeof useLoginSuspenseQuery>;
+export type LoginQueryResult = Apollo.QueryResult<LoginQuery, LoginQueryVariables>;
 export const BooksDocument = gql`
     query Books {
   books {

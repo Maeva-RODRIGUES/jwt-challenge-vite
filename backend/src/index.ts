@@ -28,26 +28,37 @@ export interface Payload {
 const app = express();
 const httpServer = http.createServer(app);
 
+// ✅ 1. Appliquer CORS avant tout autre middleware
+app.use(
+  cors({
+    origin: ["http://localhost:5173/", "https://studio.apollograhql.com"], 
+    credentials: true,
+  })
+);
+
+// ✅ 2. Activer le parsing JSON
+app.use(express.json());
+
 async function main() {
   const schema = await buildSchema({
     resolvers: [BookResolver, UserResolver],
     validate: false,
     authChecker: customAuthChecker
   });
+
   const server = new ApolloServer<MyContext>({
     schema,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 
   await server.start();
+
+  // ✅ 3. Appliquer le middleware Apollo après la configuration CORS et JSON
   app.use(
     "/",
-    cors<cors.CorsRequest>({ origin: "*" }),
-    express.json(),
     expressMiddleware(server, {
       context: async ({ req, res }) => {
         let user: User | null = null;
-
         const cookies = new Cookies(req, res);
         const token = cookies.get("token");
         if (token) {
@@ -61,13 +72,13 @@ async function main() {
             );
           } catch (err) {
             console.log(err);
-            //potentiellement gérer l'erreur, est ce que l'erreur est liée au fait que le token soit expiré? est ce qu'on le renouvelle? ou est ce autre chose? etc...
           }
         }
         return { req, res, user };
       },
     })
   );
+
   await datasource.initialize();
   await new Promise<void>((resolve) =>
     httpServer.listen({ port: 4005 }, resolve)
