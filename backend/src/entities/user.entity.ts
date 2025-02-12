@@ -5,6 +5,9 @@ import { Field, InputType, ObjectType } from "type-graphql";
 @ObjectType()
 @Entity()
 export default class User {
+  role(role: any) {
+    throw new Error("Method not implemented.");
+  }
   @Field()
   @PrimaryGeneratedColumn("uuid")
   id: string;

@@ -6,7 +6,7 @@ import { MyContext } from "..";
 
 @Resolver()
 export default class BookResolver {
-  @Authorized()
+  @Authorized (["MANAGER"])
   @Query(() => [Book])
   async books(@Ctx() ctx: MyContext) {
     if (!ctx.user) {

@@ -4,19 +4,18 @@ import datasource from "./lib/datasource";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
-import Cookies from "cookies";
-import { jwtVerify } from "jose";
-import UserService from "./services/user.service";
-import User from "./entities/user.entity";
 import { customAuthChecker } from "./lib/authChecker";
-
 
 import express from "express";
 import http from "http";
 import cors from "cors";
 import { buildSchema } from "type-graphql";
-import { startStandaloneServer } from "@apollo/server/standalone";
 import "reflect-metadata";
+import Cookies from "cookies";
+import User from "./entities/user.entity";
+import { jwtVerify } from "jose";
+import UserService from "./services/user.service";
+
 export interface MyContext {
   req: express.Request;
   res: express.Response;
@@ -35,23 +34,16 @@ async function main() {
     validate: false,
     authChecker: customAuthChecker
   });
-  // const server = new ApolloServer({
-  //   schema,
-  // });
   const server = new ApolloServer<MyContext>({
     schema,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
-  // const { url } = await startStandaloneServer(server, {
-  //   listen: { port: 4000 },
-  // });
+
   await server.start();
   app.use(
     "/",
     cors<cors.CorsRequest>({ origin: "*" }),
     express.json(),
-    // expressMiddleware accepts the same arguments:
-    // an Apollo Server instance and optional configuration options
     expressMiddleware(server, {
       context: async ({ req, res }) => {
         let user: User | null = null;
@@ -76,12 +68,11 @@ async function main() {
       },
     })
   );
-
   await datasource.initialize();
   await new Promise<void>((resolve) =>
-    httpServer.listen({ port: 4005 }, resolve)
+    httpServer.listen({ port: 4000 }, resolve)
   );
-  console.log(`🚀 Server lancé sur http://localhost:4005/`);
+  console.log(`🚀 Server lancé sur http://localhost:4000/`);
 }
 
 main();
