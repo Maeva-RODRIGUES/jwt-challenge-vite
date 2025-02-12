@@ -5,9 +5,7 @@ import { Field, InputType, ObjectType } from "type-graphql";
 @ObjectType()
 @Entity()
 export default class User {
-  role(role: any) {
-    throw new Error("Method not implemented.");
-  }
+  
   @Field()
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -19,6 +17,8 @@ export default class User {
   @Field()
   @Column()
   password: string;
+  
+
 
   @BeforeInsert()
   protected async hashPassword() {
@@ -30,11 +30,14 @@ export default class User {
 
 @ObjectType()
 export class UserWithoutPassword implements Omit<User, "password"> {
+ 
   @Field()
   id: string;
 
   @Field()
   email: string;
+
+
 }
 
 @ObjectType()

@@ -70,9 +70,9 @@ async function main() {
   );
   await datasource.initialize();
   await new Promise<void>((resolve) =>
-    httpServer.listen({ port: 4000 }, resolve)
+    httpServer.listen({ port: 4005 }, resolve)
   );
-  console.log(`🚀 Server lancé sur http://localhost:4000/`);
+  console.log(`🚀 Server lancé sur http://localhost:4005/`);
 }
 
 main();
